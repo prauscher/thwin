@@ -3,7 +3,7 @@ from django.db import models
 
 class Frist(models.Model):
     bezeichnung = models.CharField(max_length=50)
-    zeitraum = models.DurationField()
+    zeitraum = models.DurationField(blank=True, null=True)
 
 
 class Pruefung(models.Model):

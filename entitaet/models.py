@@ -6,8 +6,8 @@ class Entitaet(models.Model):
 
 
 class Person(Entitaet):
-    mail = models.EmailField()
-    authCode = models.CharField(max_length=30)
+    mail = models.EmailField(blank=True, null=True)
+    authCode = models.CharField(max_length=30, blank=True, null=True)
     name = models.CharField(max_length=50)
 
 
@@ -19,4 +19,4 @@ class Rollenzugehoerigkeit(models.Model):
     entitaet = models.ForeignKey("Entitaet", on_delete=models.CASCADE)
     rolle = models.ForeignKey("rolle.Rolle", on_delete=models.CASCADE)
     von = models.DateField()
-    bis = models.DateField()
+    bis = models.DateField(blank=True, null=True)
