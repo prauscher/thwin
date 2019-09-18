@@ -7,7 +7,7 @@ class Dienst(models.Model):
     gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{1:%Y-%m-%d} {}".format(self.datum, self.thema)
+        return "{:%Y-%m-%d} {}".format(self.datum, self.thema)
 
 
 class Teilnahme(models.Model):
