@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Entitaet(models.Model):
-    pass
+    gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
 
 
 class Person(Entitaet):
@@ -18,5 +18,6 @@ class Material(Entitaet):
 class Rollenzugehoerigkeit(models.Model):
     entitaet = models.ForeignKey("Entitaet", on_delete=models.CASCADE)
     rolle = models.ForeignKey("rolle.Rolle", on_delete=models.CASCADE)
+    gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
     von = models.DateField()
     bis = models.DateField(blank=True, null=True)

@@ -4,6 +4,7 @@ from django.db import models
 class Dienst(models.Model):
     datum = models.DateField()
     thema = models.TextField()
+    gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
 
 
 class Teilnahme(models.Model):
