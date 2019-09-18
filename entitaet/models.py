@@ -27,3 +27,10 @@ class Rollenzugehoerigkeit(models.Model):
     gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
     von = models.DateField()
     bis = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        description = "{} ist {} in {}".format(self.entitaet, self.rolle, self.gruppe)
+        if self.bis is None:
+            description = description + " (seit {:%Y%m%d})".format(self.von)
+        else:
+            description = description + " ({:%Y%m%d} - {:%Y%m%d})".format(self.von, self.bis)

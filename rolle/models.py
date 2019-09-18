@@ -19,3 +19,10 @@ class Freigabe(models.Model):
     berechtigung = models.ForeignKey("Berechtigung", on_delete=models.CASCADE)
     rolle = models.ForeignKey("Rolle", on_delete=models.CASCADE)
     untergruppen = models.BooleanField()
+
+    def __str__(self):
+        format_string = "{} darf {}"
+        if self.untergruppen:
+            format_string = format_string + " inkl. Untergruppen"
+
+        return format_string.format(self.rolle, self.berechtigung)
