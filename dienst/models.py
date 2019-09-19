@@ -2,12 +2,13 @@ from django.db import models
 
 
 class Dienst(models.Model):
-    datum = models.DateField()
+    start = models.DateTimeField()
+    ende = models.DateTimeField()
     thema = models.TextField()
     gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{:%Y-%m-%d} {} ({})".format(self.datum, self.thema, self.gruppe)
+        return "{:%Y-%m-%d} {} ({})".format(self.start, self.thema, self.gruppe)
 
 
 class Teilnahme(models.Model):
