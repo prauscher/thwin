@@ -16,8 +16,10 @@ class Rolle(models.Model):
 
 
 class Freigabe(models.Model):
-    berechtigung = models.ForeignKey("Berechtigung", on_delete=models.CASCADE)
-    rolle = models.ForeignKey("Rolle", on_delete=models.CASCADE)
+    berechtigung = models.ForeignKey("Berechtigung", on_delete=models.CASCADE,
+                                     related_name="freigaben")
+    rolle = models.ForeignKey("Rolle", on_delete=models.CASCADE,
+                              related_name="freigaben")
     untergruppen = models.BooleanField()
 
     def __str__(self):

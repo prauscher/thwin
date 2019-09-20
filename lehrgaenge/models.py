@@ -25,7 +25,8 @@ class Teilnahme(models.Model):
                (WUNSCH_INFO, "Nur Last-Minute"),
                (BESUCHT, "Besucht")]
 
-    lehrgang = models.ForeignKey('Lehrgang', on_delete=models.CASCADE)
+    lehrgang = models.ForeignKey('Lehrgang', on_delete=models.CASCADE,
+                                 related_name="teilnahmen")
     person = models.ForeignKey('entitaet.Person', on_delete=models.CASCADE,
                                related_name="lehrgang_teilnahmen")
     status = models.CharField(max_length=1, choices=OPTIONS,

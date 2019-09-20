@@ -10,7 +10,8 @@ class Frist(models.Model):
 
 
 class Pruefung(models.Model):
-    frist = models.ForeignKey("Frist", on_delete=models.CASCADE)
+    frist = models.ForeignKey("Frist", on_delete=models.CASCADE,
+                              related_name="pruefungen")
     eintragung = models.DateField()
     ablauf = models.DateField()
 
@@ -19,8 +20,10 @@ class Pruefung(models.Model):
 
 
 class Fristzuordenbarkeit(models.Model):
-    frist = models.ForeignKey("Frist", on_delete=models.CASCADE)
-    rolle = models.ForeignKey("rolle.Rolle", on_delete=models.CASCADE)
+    frist = models.ForeignKey("Frist", on_delete=models.CASCADE,
+                              related_name="zuordenbarkeiten")
+    rolle = models.ForeignKey("rolle.Rolle", on_delete=models.CASCADE,
+                              related_name="fristzuordenbarkeiten")
 
     def __str__(self):
         return "{} für {}".format(self.frist, self.rolle)

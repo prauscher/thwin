@@ -5,7 +5,8 @@ class Dienst(models.Model):
     start = models.DateTimeField()
     ende = models.DateTimeField()
     thema = models.TextField()
-    gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
+    gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE,
+                               related_name="dienste")
 
     def __str__(self):
         return "{:%Y-%m-%d} {} ({})".format(self.start, self.thema,
@@ -20,7 +21,8 @@ class Teilnahme(models.Model):
                (ABWESEND, "Abwesend"),
                (UNKLAR, "Unklar")]
 
-    dienst = models.ForeignKey('dienst.Dienst', on_delete=models.CASCADE)
+    dienst = models.ForeignKey('dienst.Dienst', on_delete=models.CASCADE,
+                               related_name="teilnahmen")
     person = models.ForeignKey('entitaet.Person', on_delete=models.CASCADE,
                                related_name="dienst_teilnahmen")
     vorab = models.CharField(

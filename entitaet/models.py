@@ -1,13 +1,16 @@
 from django.db import models
+from model_utils.managers import InheritanceManager
 
 
 class Entitaet(models.Model):
-    gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
+    objects = InheritanceManager()
+    gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE,
+                               related_name="entitaeten")
 
 
 class Person(Entitaet):
     mail = models.EmailField(blank=True, null=True)
-    authCode = models.CharField(max_length=30, blank=True, null=True)
+    auth_code = models.CharField(max_length=30, blank=True, null=True)
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -22,9 +25,12 @@ class Material(Entitaet):
 
 
 class Rollenzugehoerigkeit(models.Model):
-    entitaet = models.ForeignKey("Entitaet", on_delete=models.CASCADE)
-    rolle = models.ForeignKey("rolle.Rolle", on_delete=models.CASCADE)
-    gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
+    entitaet = models.ForeignKey("Entitaet", on_delete=models.CASCADE,
+                                 related_name="rollenzugehoerigkeiten")
+    rolle = models.ForeignKey("rolle.Rolle", on_delete=models.CASCADE,
+                              related_name="rollenzugehoerigkeiten")
+    gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE,
+                               related_name="rollenzugehoerigkeiten")
     von = models.DateField()
     bis = models.DateField(blank=True, null=True)
 
@@ -36,3 +42,5 @@ class Rollenzugehoerigkeit(models.Model):
         else:
             description = description + (" ({:%Y%m%d} - {:%Y%m%d})"
                                          .format(self.von, self.bis))
+
+        return description

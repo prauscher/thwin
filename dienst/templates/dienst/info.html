@@ -1,0 +1,9 @@
+<h1>{{ dienst }}</h1>
+
+<table>
+{% for teilnahme in teilnahmen %}
+<tr>
+ <th>{{ teilnahme.person }}</th>
+ <td>{{ teilnahme.teilnahme }}</td>
+{% endfor %}
+</table>
