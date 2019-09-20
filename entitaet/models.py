@@ -29,8 +29,10 @@ class Rollenzugehoerigkeit(models.Model):
     bis = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        description = "{} ist {} in {}".format(self.entitaet, self.rolle, self.gruppe)
+        description = "{} ist {} in {}".format(self.entitaet, self.rolle,
+                                               self.gruppe)
         if self.bis is None:
             description = description + " (seit {:%Y%m%d})".format(self.von)
         else:
-            description = description + " ({:%Y%m%d} - {:%Y%m%d})".format(self.von, self.bis)
+            description = description + (" ({:%Y%m%d} - {:%Y%m%d})"
+                                         .format(self.von, self.bis))

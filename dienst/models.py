@@ -8,7 +8,8 @@ class Dienst(models.Model):
     gruppe = models.ForeignKey("gruppe.Gruppe", on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{:%Y-%m-%d} {} ({})".format(self.start, self.thema, self.gruppe)
+        return "{:%Y-%m-%d} {} ({})".format(self.start, self.thema,
+                                            self.gruppe)
 
 
 class Teilnahme(models.Model):
@@ -27,4 +28,5 @@ class Teilnahme(models.Model):
         max_length=1, choices=OPTIONS, default=UNKLAR)
 
     def __str__(self):
-        return "{} bei {}: {} vorab, {} ist".format(self.person, self.dienst, self.vorab, self.ist)
+        return "{} bei {}: {} vorab, {} ist".format(self.person, self.dienst,
+                                                    self.vorab, self.ist)
