@@ -21,7 +21,8 @@ class Teilnahme(models.Model):
                (UNKLAR, "Unklar")]
 
     dienst = models.ForeignKey('dienst.Dienst', on_delete=models.CASCADE)
-    person = models.ForeignKey('entitaet.Person', on_delete=models.CASCADE)
+    person = models.ForeignKey('entitaet.Person', on_delete=models.CASCADE,
+                               related_name="dienst_teilnahmen")
     vorab = models.CharField(
         max_length=1, choices=OPTIONS, default=UNKLAR)
     ist = models.CharField(

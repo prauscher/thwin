@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'frist',
     'gruppe',
     'rolle',
+    'lehrgaenge',
 ]
 
 MIDDLEWARE = [
