@@ -9,6 +9,7 @@ class Lehrgang(models.Model):
 
     name = models.CharField(max_length=40)
     kuerzel = models.CharField(max_length=10)
+    link = models.URLField(null=True, blank=True)
     austragung = models.CharField(max_length=1, choices=OPTIONS)
 
     def __str__(self):

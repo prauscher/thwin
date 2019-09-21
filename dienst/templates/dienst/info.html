@@ -1,9 +1,19 @@
 <h1>{{ dienst }}</h1>
 
 <table>
+<tr>
+ <th>Person</th>
+ <th>Gemeldet</th>
+ <th>Anwesend</th>
+ <th>Optionen</th>
+</tr>
 {% for teilnahme in teilnahmen %}
 <tr>
  <th>{{ teilnahme.person }}</th>
- <td>{{ teilnahme.teilnahme }}</td>
+ <td>{{ teilnahme.teilnahme.vorab }} {% for option, label in optionen %}{% if not forloop.first %}/{% endif %}<a href="{% url "anwesenheit_setzen" dienst.id teilnahme.person.id option teilnahme.teilnahme.ist %}">{{ option }}</a>{% endfor %}</td>
+ <td>{{ teilnahme.teilnahme.ist }} {% for option, label in optionen %}{% if not forloop.first %}/{% endif %}<a href="{% url "anwesenheit_setzen" dienst.id teilnahme.person.id teilnahme.teilnahme.vorab option %}">{{ option }}</a>{% endfor %}</td>
+</tr>
 {% endfor %}
 </table>
+
+<a href="{% url "umfrage_versenden" dienst.id %}">Umfrage versenden</a>
