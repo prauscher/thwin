@@ -127,10 +127,7 @@ def request_token(request):
         path = reverse("login_by_token", kwargs={"token": token})
         link = "{}://{}{}".format(request.scheme, domain, path)
 
-        # TODO mail
-        print(link)
-
-        message = EmailMessage(subject="auth link", body=link)
+        message = EmailMessage(subject="auth link", to=[user.mail], body=link)
         message.send()
     return render(request, "login/request_link_ok.html",
                   {"mail": request.POST["mail"]})

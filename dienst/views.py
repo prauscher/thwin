@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.core.mail import EmailMessage
 from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
 from django.urls import reverse
 from django.contrib.sites.shortcuts import get_current_site
@@ -46,14 +47,21 @@ def umfrage_versenden(request, dienst_id):
     else:
         mitglieder = dienst.gruppe.get_mitglieder()
         for person in mitglieder:
+            if not person.mail:
+                # TODO what now?
+                continue
+
             token = signer_umfragen.sign("{}:{}".format(person.id, dienst.id))
             domain = get_current_site(request).domain
             moeglichkeiten = Teilnahme.OPTIONS
 
+            links = []
             for mc, ml in moeglichkeiten:
                 path = reverse("umfrage_antwort", kwargs={"token": token, "antwort": mc})
                 link = "{}://{}{}".format(request.scheme, domain, path)
-                print(person, ml, link)
+                links.append((link, ml))
+
+            EmailMessage(subject="Abfrage: {}".format(dienst), body=" / ".join([link for link, ml in links]), to=[person.mail]).send()
 
         return HttpResponse("Versendet")
 
@@ -63,6 +71,7 @@ def anwesenheit_setzen(request, dienst_id, person_id, vorab, ist):
     try:
         dienst = Dienst.objects.get(pk=dienst_id)
         person = Person.objects.get(pk=person_id)
+        # TODO ausnahme fuer eigene dienste (person == session && dienst passt)
         check_permission(request, dienst.gruppe, 4)
     except (Person.DoesNotExist, Dienst.DoesNotExist):
         pass
