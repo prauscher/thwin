@@ -59,7 +59,7 @@ def _calculate_permissions(person):
         rolle = rollenzugehoerigkeit.rolle
         rollenberechtigungen = [[freigabe.berechtigung.id, freigabe.untergruppen] for freigabe in rolle.freigaben.all()]
 
-        berechtigungen[gruppe.id].extend(rollenberechtigungen)
+        berechtigungen[str(gruppe.id)].extend(rollenberechtigungen)
 
     return berechtigungen
 
