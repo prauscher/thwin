@@ -13,16 +13,32 @@ class Command(BaseCommand):
     help = ''
 
     def add_arguments(self, parser):
-        pass
+        parser.add_argument('--last-minute', action="store_true", help="Mailversand abhängig von verfügbaren Restplätzen")
+        parser.add_argument('--daysleft', action="store_true", help="Mailversand abhängig von verbleibenden Tagen bis Lehrgangsbeginn")
+        parser.add_argument('--mindaysleft', type=int, help="Keine Mail versenden, wenn weniger als x Tage bis Lehrgangsbeginn verbleiben", default=7*8)
+        parser.add_argument('--maxdaysleft', type=int, help="Keine Mail versenden, wenn mehr als x Tage bis Lehrgangsbeginn verbleiben", default=7*10)
 
-    def handle(self, *args, **kwargs):
+    def create_filter(self, last_minute, daysleft, mindaysleft, maxdaysleft):
+        def _filter(termin_start, restplaetze):
+            if last_minute and restplaetze > 0:
+                return True
+
+            restzeit = termin_start - datetime.now()
+            if daysleft and (restzeit < timedelta(days=maxdaysleft) and restzeit > timedelta(days=mindaysleft)):
+                return True
+
+            return False
+        return _filter
+
+    def handle(self, last_minute, daysleft, mindaysleft, maxdaysleft, *args, **kwargs):
+        filter = self.create_filter(last_minute, daysleft, mindaysleft, maxdaysleft)
         next = "SiteGlobals/Forms/Archiv/THW-BuS/DE/Lehrgangsangebote/Lehrgangsangebote_Formular.html"
         while True:
-            next = self._handle("https://www.thw-bundesschule.de/", next)
+            next = self._handle("https://www.thw-bundesschule.de/", next, filter)
             if next is None:
                 break
 
-    def _handle(self, host, path):
+    def _handle(self, host, path, filter):
         tree = html.fromstring(requests.get(host + path, headers={"User-Agent": "TotallyNotRequests/1.1"}).content)
         for elem in tree.xpath('//div[@class="courseList"]//div[@class="teaser course"]'):
             titel_elem = elem.find("h2")
@@ -41,14 +57,14 @@ class Command(BaseCommand):
                 if match is not None:
                     restplaetze = int(match.group(1))
 
-            self._handle_lehrgang(titel, link, termin_start, termin_ende, restplaetze)
+            self._handle_lehrgang(titel, link, termin_start, termin_ende, restplaetze, filter)
 
         next = tree.xpath('//ul[@class="right presearch"]//li[@class="forward"]//a')
         if not next:
             return None
         return next[0].get("href")
 
-    def _handle_lehrgang(self, titel, link, termin_start, termin_ende, restplaetze):
+    def _handle_lehrgang(self, titel, link, termin_start, termin_ende, restplaetze, filter):
         # normalisieren
         kuerzel, bezeichnung = [text.strip() for text in titel.split("-", 1)]
         kuerzel = "".join([char for char in kuerzel if char.isalnum()]).capitalize()
@@ -60,8 +76,7 @@ class Command(BaseCommand):
         lehrgang.save()
 
         # wenn meldefrist bevorsteht alarmieren
-        restzeit = termin_start - datetime.now()
-        if (restzeit < timedelta(weeks=8+3) and restzeit > timedelta(weeks=8)) or restplaetze > 0:
+        if filter(termin_start, restplaetze):
             for teilnahme in lehrgang.teilnahmen.exclude(status=Teilnahme.BESUCHT):
                 # TODO mail an teilnehmer schicken
                 print(teilnahme, link)
